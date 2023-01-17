@@ -1,0 +1,41 @@
+<ng-container>
+  <div class="mr-5 w-1/4">
+    <div class="mb-10">
+      <p class="text-2xl mb-1 font-bold"> {{ compte.prenom }} {{ compte.nom }}</p>
+      <p>{{ compte.mail }}</p>
+    </div>
+
+
+    <mat-expansion-panel (click)="onExpandedDetail()"  [expanded]="expandDetail">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="text-lg font-semibold">
+          Détails
+        </mat-panel-title>
+        <button *ngIf="!hideModifyButton" (click)="onModify()" mat-raised-button color="primary">Modifier</button>
+      </mat-expansion-panel-header>
+
+      <ng-container *ngFor="let detail of details">
+        <div class="mb-3">
+          <p class="text-slate-500">{{ detail.title }}</p>
+          <p>{{ detail.content }}</p>
+          <p *ngIf="detail.break"> {{ detail.break}} </p>
+        </div>
+      </ng-container>
+    </mat-expansion-panel>
+  </div>
+
+
+  <div class="ml-5">
+    <p class="text-lg font-bold mb-2">Transports</p>
+    <p>Tableau des transports sous la forme d'un composant</p>
+    <p>
+      Je crée une page à part
+      Le même que pour comptes, sauf que je rajouterais des actions en plus
+      - démarrer
+      - terminer
+      - Facturer
+    </p>
+  </div>
+
+
+</ng-container>

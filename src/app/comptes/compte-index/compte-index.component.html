@@ -1,0 +1,45 @@
+<div class="flex justify-between mt-3">
+  <div>
+    <h1 class="items-baseline">Comptes</h1>
+  </div>
+  <div *ngIf="hasComptesChecked()">
+    <button (click)="onComptesDelete()"
+            mat-raised-button color="warn"
+            class="mr-3">
+      Supprimer
+    </button>
+    <button (click)="onComptesEnable()"
+            *ngIf="filterIsDisable()"
+            mat-raised-button color="primary">
+      Activer
+    </button>
+  </div>
+</div>
+
+
+<mat-button-toggle-group class="mb-3 block">
+  <mat-button-toggle
+    (click)="onToComptes()"
+    [checked]="!activeFilter"
+  >
+    Tous
+  </mat-button-toggle>
+  <mat-button-toggle
+    [checked]="filterIsEnable()"
+    (click)="onToComptesEnabled()">
+    Activés
+  </mat-button-toggle>
+  <mat-button-toggle
+    [checked]="filterIsDisable()"
+    (click)="onToComptesDisabled()">
+    Demandes
+  </mat-button-toggle>
+</mat-button-toggle-group>
+
+
+<app-compte-tab
+  [clickable]="true"
+  (compteClicked)="onToCompte($event)"
+  (comptesChecked)="onComptesChecked($event)"
+>
+</app-compte-tab>

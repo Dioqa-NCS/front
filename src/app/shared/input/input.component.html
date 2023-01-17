@@ -1,0 +1,48 @@
+<mat-form-field [ngClass]="classes" *ngIf="control" class="mb-3">
+  <mat-label>{{ label }}</mat-label>
+
+  <ng-container>
+    <input [mask]="mask" [type]="inputType" [formControl]="control" matInput>
+
+    <ng-content></ng-content>
+    <ng-container *ngIf="showErrors()">
+      <mat-error *ngIf="control.touched && control.invalid">
+        <span *ngIf="control.errors['required']">Ce champ est obligatoire.</span>
+      </mat-error>
+
+      <mat-error *ngIf="control.touched && control.invalid">
+        <span *ngIf="control.errors['nonUniqueUsername']">Identifiant deja existant</span>
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['email']">
+        Le mail n'est pas une adresse email valide.
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['minlength']">
+        Le champ doit être d’une longueur de
+        {{ control.errors['minlength']['requiredLength'] }}
+        caractères minimum.
+        {{ control.errors['minlength']['actualLength'] }}
+        caractères ont été saisis.
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['numberFormat']">
+        Le champ ne doit pas contenir de lettres.
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['notDigitInPassword']">
+        Le mot de passe dot contenir 1 chiffre.
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['notLowerCharacterPassword']">
+        Le mot de passe dot contenir 1 caractère minuscule.
+      </mat-error>
+
+      <mat-error *ngIf="control.errors['notUpperCharacterPassword']">
+        Le mot de passe dot contenir 1 caractère majuscule.
+      </mat-error>
+    </ng-container>
+  </ng-container>
+</mat-form-field>
+
+

@@ -1,0 +1,4 @@
+:host {
+  @apply mt-3;
+  @apply flex;
+}

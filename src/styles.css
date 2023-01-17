@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  h1 {
+    @apply text-4xl mb-8;
+  }
+
+  h2 {
+    @apply text-3xl mb-7;
+  }
+
+  body {
+    @apply text-sm;
+  }
+}

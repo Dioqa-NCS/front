@@ -1,0 +1,11 @@
+<mat-dialog-content>
+  <h1 class="text-center mt-3">Connection</h1>
+
+
+  <form [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+    <app-input [classes]="['w-full']" [control]="signinForm.controls.username" label="Email" inputType="email"></app-input>
+    <app-input [classes]="['w-full']" [control]="signinForm.controls.password" label="Mot de passe" inputType="password"></app-input>
+
+    <button mat-button color="primary">Soumettre</button>
+  </form>
+</mat-dialog-content>

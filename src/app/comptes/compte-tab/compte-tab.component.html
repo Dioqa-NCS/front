@@ -1,0 +1,20 @@
+<app-tab
+  *ngIf="!clickable"
+  [items]="_comptes"
+  [fields]="_fields"
+  [clickable]="true"
+>
+</app-tab>
+
+<app-tab
+  *ngIf="clickable"
+  [items]="_comptes"
+  [fields]="_fields"
+  [hasSelect]="true"
+  (rowsChecked)="_onComptesChecked($event)"
+  (rowClicked)="_onCompteClicked($event)"
+  [clickable]="true"
+  [isPaginate]="true"
+  [pagesSizeOptions]="[5, 10, 20]"
+>
+</app-tab>
