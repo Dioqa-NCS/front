@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { environment } from '../../environments/environment'
 
 export interface Params {
   $expand?: string,
@@ -66,25 +67,23 @@ export enum FilterCompte {
   providedIn: 'root',
 })
 export class CompteService {
-  rootUrl = 'https://localhost:7177/api'
-
   constructor(private http: HttpClient) {
   }
 
   getComptes(params: Params | null = null) {
-    return this.http.get<CompteSummary[]>(`${this.rootUrl}/Comptes`, {
+    return this.http.get<CompteSummary[]>(`${environment.apiUrl}/api/Comptes`, {
       params: { ...params },
     })
   }
 
   getCompte(id: number, params: Params | null = null) {
-    return this.http.get<Compte>(`${this.rootUrl}/Comptes/${id}`, {
+    return this.http.get<Compte>(`${environment.apiUrl}/api/Comptes/${id}`, {
       params: { ...params },
     })
   }
 
   deleteComptes(ids: number[]) {
-    return this.http.delete(`${this.rootUrl}/Comptes`, {
+    return this.http.delete(`${environment.apiUrl}/api/Comptes`, {
       params: {
         Ids: ids.join(','),
       },
@@ -92,6 +91,6 @@ export class CompteService {
   }
 
   updateComptes(comptes: ComptePatched[]) {
-    return this.http.patch<ComptePatched[]>(`${this.rootUrl}/Comptes`, comptes)
+    return this.http.patch<ComptePatched[]>(`${environment.apiUrl}/api/Comptes`, comptes)
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, tap } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
+import { environment } from '../../environments/environment'
 
 export enum AuthRole {
   Administrator = 'Administrateur',
@@ -55,7 +56,7 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  rootUrl = 'https://localhost:7177'
+  rootUrl = 'https://localhost:49155'
 
   signedin$ = new BehaviorSubject<boolean | null>(null)
 
@@ -66,17 +67,17 @@ export class AuthService {
   isAdministrator$ = new BehaviorSubject<boolean | null>(null)
 
   usernameAvailable(username: string) {
-    return this.http.post<AuthAvailableUsernameRequest>(`${this.rootUrl}/Auth/username`, {
+    return this.http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
       username,
     })
   }
 
   signup(userSignupRequest: Partial<AuthSignupRequest>) {
-    return this.http.post<AuthSignupResponse>(`${this.rootUrl}/Auth/signup`, userSignupRequest)
+    return this.http.post<AuthSignupResponse>(`${environment.apiUrl}/Auth/signup`, userSignupRequest)
   }
 
   signout() {
-    return this.http.post(`${this.rootUrl}/Auth/signout`, {})
+    return this.http.post(`${environment.apiUrl}/Auth/signout`, {})
       .pipe(tap({
         next: () => {
           this.signedin$.next(false)
@@ -85,7 +86,7 @@ export class AuthService {
   }
 
   signin(userSigninRequest: Partial<AuthSigninRequest>) {
-    return this.http.post<AuthSigninResponse>(`${this.rootUrl}/Auth/signin`, userSigninRequest).pipe(
+    return this.http.post<AuthSigninResponse>(`${environment.apiUrl}/Auth/signin`, userSigninRequest).pipe(
       tap(({ roles }) => {
         this.signedin$.next(true)
         this.roles$.next(roles)
@@ -100,7 +101,7 @@ export class AuthService {
   }
 
   checkAuth() {
-    return this.http.get<AuthCheckResponse>(`${this.rootUrl}/Auth/checkauth`).pipe(
+    return this.http.get<AuthCheckResponse>(`${environment.apiUrl}/Auth/checkauth`).pipe(
       tap(({ roles, authenticated }) => {
         this.signedin$.next(authenticated)
         this.roles$.next(roles)
