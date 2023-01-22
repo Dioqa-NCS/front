@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://localhost:49155',
+  apiUrl: process.env.NG_APP_API_URL,
 }

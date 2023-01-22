@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://ncs-api-e54v.onrender.com',
+  apiUrl: process.env.NG_APP_API_URL,
 }
