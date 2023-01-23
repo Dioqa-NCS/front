@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import {
-  BehaviorSubject, skipWhile, tap,
+  BehaviorSubject, map, skipWhile, take, tap,
 } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../environments/environment'
@@ -60,18 +60,30 @@ export class AuthService {
 
   signedin$ = new BehaviorSubject<boolean | null>(null)
 
-  private roles: AuthRole[] = []
+  roles$ = new BehaviorSubject<AuthRole[] | null>(null)
 
   hasRole(rolesToAuthorize: AuthRole[]) {
-    return rolesToAuthorize.some(roleAuthorize => this.roles.includes(roleAuthorize))
+    return this.roles$.pipe(
+      skipWhile(value => value === null),
+      take(1),
+      map(roles => rolesToAuthorize.some(roleAuthorize => roles?.includes(roleAuthorize))),
+    )
   }
 
   isCustomer() {
-    return this.roles.includes(AuthRole.Customer)
+    return this.roles$.pipe(
+      skipWhile(value => value === null),
+      take(1),
+      map(roles => roles?.includes(AuthRole.Customer)),
+    )
   }
 
   isAdministrator() {
-    return this.roles.includes(AuthRole.Administrator)
+    return this.roles$.pipe(
+      skipWhile(value => value === null),
+      take(1),
+      map(roles => roles?.includes(AuthRole.Administrator)),
+    )
   }
 
   usernameAvailable(username: string) {
@@ -98,17 +110,16 @@ export class AuthService {
       skipWhile(value => value === null),
       tap(({ roles }) => {
         this.signedin$.next(true)
-        this.roles = roles
+        this.roles$.next(roles)
       }),
     )
   }
 
   checkAuth() {
     return this.http.get<AuthCheckResponse>(`${environment.apiUrl}/Auth/checkauth`).pipe(
-      skipWhile(value => value === null),
       tap(({ roles, authenticated }) => {
         this.signedin$.next(authenticated)
-        this.roles = roles
+        this.roles$.next(roles)
       }),
     )
   }
