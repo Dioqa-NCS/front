@@ -62,6 +62,8 @@ export class AuthService {
 
   roles$ = new BehaviorSubject<AuthRole[] | null>(null)
 
+  userId: number | null = null
+
   hasRole(rolesToAuthorize: AuthRole[]) {
     return this.roles$.pipe(
       skipWhile(value => value === null),

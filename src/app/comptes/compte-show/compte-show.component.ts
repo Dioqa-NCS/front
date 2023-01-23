@@ -79,13 +79,11 @@ export class CompteShowComponent implements OnInit {
     })
   }
 
-  onExpandedDetail() {
-    this.expandDetail = !this.expandDetail
-
-    if (this.expandDetail) {
-      this.hideModifyButton = false
-      return
-    }
+  onClosedDetail() {
     this.hideModifyButton = true
+  }
+
+  onOpenedDetail() {
+    this.hideModifyButton = false
   }
 }

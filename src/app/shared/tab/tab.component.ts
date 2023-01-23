@@ -37,7 +37,7 @@ export class TabComponent implements OnInit, AfterViewInit {
 
   @Input() hasSelect = false
 
-  _rowsCheck: Item[] = []
+  private _rowsCheck: Item[] = []
 
   _columns: string[] = []
 

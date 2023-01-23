@@ -6,7 +6,7 @@
     </div>
 
 
-    <mat-expansion-panel (click)="onExpandedDetail()"  [expanded]="expandDetail">
+    <mat-expansion-panel (opened)="onOpenedDetail()" (closed)="onClosedDetail()"  [expanded]="expandDetail">
       <mat-expansion-panel-header>
         <mat-panel-title class="text-lg font-semibold">
           Détails
