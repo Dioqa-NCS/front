@@ -2,7 +2,7 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { ToastrService } from 'ngx-toastr'
 import { Router } from '@angular/router'
-import { MatDialog } from '@angular/material/dialog'
+import { MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { AuthService } from '../auth.service'
 import { PasswordFormatValidator } from '../validators/password-format-validator'
 
@@ -25,10 +25,10 @@ export class SigninComponent {
   })
 
   constructor(
-    private authService: AuthService,
-    private toastrService: ToastrService,
-    private router: Router,
-    private dialog: MatDialog,
+    private readonly authService: AuthService,
+    private readonly toastrService: ToastrService,
+    private readonly router: Router,
+    private readonly dialog: MatDialogRef<SigninComponent>,
   ) {
   }
 
@@ -40,7 +40,10 @@ export class SigninComponent {
       next: async () => {
         this.toastrService.success('Vous êtes connecté.')
         await this.router.navigateByUrl('/dashboard')
-        this.dialog.closeAll()
+        this.dialog.close()
+      },
+      error: () => {
+        this.toastrService.error('Identifiants incorrectes.')
       },
     })
   }

@@ -7,7 +7,7 @@ import { Compte } from '../compte.service'
   styleUrls: ['./compte-create.component.css'],
 })
 export class CompteCreateComponent {
-  compte: Compte
+  public compte: Compte
 
   constructor() {
     this.compte = {

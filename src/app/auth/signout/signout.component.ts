@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
+import { ToastrService } from 'ngx-toastr'
 import { AuthService } from '../auth.service'
 
 @Component({
@@ -8,11 +9,17 @@ import { AuthService } from '../auth.service'
   styleUrls: ['./signout.component.css'],
 })
 export class SignoutComponent implements OnInit {
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {
   }
 
   async ngOnInit() {
-    this.authService.signout().subscribe({})
-    await this.router.navigateByUrl('/')
+    this.authService.signout().subscribe({
+      next: async () => {
+        await this.router.navigateByUrl('/')
+      },
+    })
   }
 }

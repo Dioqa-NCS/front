@@ -20,27 +20,15 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   openedToolbar = true
 
-  signedin$ = new BehaviorSubject<boolean | null>(false)
-
-  isCustomer = false
-
-  isAdministrator = false
-
   constructor(
     private dialog: MatDialog,
     private renderer: Renderer2,
-    private authService: AuthService,
+    public authService: AuthService,
   ) {
-    this.signedin$ = this.authService.signedin$
   }
 
   ngOnInit() {
     this.authService.checkAuth().subscribe({})
-
-    this.authService.roles$.subscribe(roles => {
-      this.isCustomer = roles?.includes(AuthRole.Customer) || false
-      this.isAdministrator = roles?.includes(AuthRole.Administrator) || false
-    })
   }
 
   ngAfterViewInit() {

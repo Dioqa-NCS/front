@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { ToastrService } from 'ngx-toastr'
 import { Compte, ComptePatched, CompteService } from '../compte.service'
 
 @Component({
@@ -9,13 +10,19 @@ import { Compte, ComptePatched, CompteService } from '../compte.service'
 })
 export class CompteUpdateComponent {
   constructor(
-    public compteService: CompteService,
-    public dialog: MatDialogRef<CompteUpdateComponent>,
+    private readonly compteService: CompteService,
+    private readonly dialog: MatDialogRef<CompteUpdateComponent>,
     @Inject(MAT_DIALOG_DATA) public compte: Compte,
+    private readonly toastrService: ToastrService,
   ) {
   }
 
   onSubmit(compte: ComptePatched) {
-    this.compteService.updateComptes([{ ...compte, id: this.compte.id }]).subscribe({})
+    this.compteService.updateComptes([{ ...compte, id: this.compte.id }]).subscribe({
+      next: () => {
+        this.toastrService.success('Les modifications ont été prises en compte.')
+        this.dialog.close()
+      },
+    })
   }
 }

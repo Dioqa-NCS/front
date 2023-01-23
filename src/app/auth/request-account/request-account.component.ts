@@ -94,6 +94,7 @@ export class RequestAccountComponent implements OnInit {
       email: this.requestAccountForm.value.mail,
     }).subscribe({
       next: async () => {
+        this.toastrService.success('Demande de compte transmis avec succès. Veuillez attendre l\'activation de votre compte.')
         await this.router.navigateByUrl('/')
       },
     })

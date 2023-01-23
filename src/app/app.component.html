@@ -7,11 +7,11 @@
     <div>
       <ul fxLayout fxLayoutGap="20px">
         <li>
-          <button *ngIf="!(signedin$ | async)" mat-icon-button (click)="onSignIn()">
+          <button *ngIf="!(authService.signedin$ | async)" mat-icon-button (click)="onSignIn()">
             <span class="align-middle mr-2">Connection</span>
             <mat-icon class="align-middle">person_outline</mat-icon>
           </button>
-          <button *ngIf="signedin$ | async" mat-icon-button routerLink="/signout">
+          <button *ngIf="authService.signedin$ | async" mat-icon-button routerLink="/signout">
             <span class="align-middle mr-2">Déconnexion</span>
             <mat-icon class="align-middle">exit_to_app</mat-icon>
           </button>
@@ -25,18 +25,18 @@
 <mat-sidenav-container>
   <mat-sidenav [fixedInViewport]="true" mode="side" [opened]="openedToolbar">
     <mat-nav-list #navList>
-      <ng-container *ngIf="!(signedin$ | async)">
+      <ng-container *ngIf="!(authService.signedin$ | async)">
         <a mat-list-item [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-list-item"
            routerLink="/request-account">Demande Compte</a>
       </ng-container>
 
-      <ng-container *ngIf="(signedin$ | async)">
-        <ng-container *ngIf="isAdministrator">
+      <ng-container *ngIf="(authService.signedin$ | async)">
+        <ng-container *ngIf="(authService.isAdministrator())">
           <a mat-list-item
              routerLinkActive="active-list-item"
              routerLink="/comptes">Comptes</a>
         </ng-container>
-        <ng-container *ngIf=" isCustomer || isAdministrator">
+        <ng-container *ngIf=" (authService.isCustomer()) || (authService.isAdministrator())">
           <a mat-list-item [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active-list-item"
              routerLink="/dashboard">Tableau de bord</a>
         </ng-container>

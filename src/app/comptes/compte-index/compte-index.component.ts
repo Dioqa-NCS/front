@@ -44,7 +44,7 @@ export class CompteIndexComponent implements OnInit {
       relativeTo: this.route,
       queryParamsHandling: 'merge',
       queryParams: {
-        $filter: FilterCompte.disable,
+        $filter: `${FilterCompte.disable}`,
       },
     })
   }
@@ -53,7 +53,7 @@ export class CompteIndexComponent implements OnInit {
     await this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        $filter: FilterCompte.enable,
+        $filter: `${FilterCompte.enable}`,
       },
     })
   }

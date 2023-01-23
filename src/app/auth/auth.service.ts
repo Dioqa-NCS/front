@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, tap } from 'rxjs'
+import {
+  BehaviorSubject, skipWhile, tap,
+} from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../environments/environment'
 
@@ -11,7 +13,7 @@ export enum AuthRole {
 interface AuthCheckResponse {
   authenticated: boolean;
   username: string;
-  roles: AuthRole[]
+  roles: AuthRole[];
 }
 
 interface AuthAvailableUsernameRequest {
@@ -56,15 +58,21 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  rootUrl = 'https://localhost:49155'
-
   signedin$ = new BehaviorSubject<boolean | null>(null)
 
-  roles$ = new BehaviorSubject<string[] | null>(null)
+  private roles: AuthRole[] = []
 
-  isCustomer$ = new BehaviorSubject<boolean | null>(null)
+  hasRole(rolesToAuthorize: AuthRole[]) {
+    return rolesToAuthorize.some(roleAuthorize => this.roles.includes(roleAuthorize))
+  }
 
-  isAdministrator$ = new BehaviorSubject<boolean | null>(null)
+  isCustomer() {
+    return this.roles.includes(AuthRole.Customer)
+  }
+
+  isAdministrator() {
+    return this.roles.includes(AuthRole.Administrator)
+  }
 
   usernameAvailable(username: string) {
     return this.http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
@@ -87,30 +95,20 @@ export class AuthService {
 
   signin(userSigninRequest: Partial<AuthSigninRequest>) {
     return this.http.post<AuthSigninResponse>(`${environment.apiUrl}/Auth/signin`, userSigninRequest).pipe(
+      skipWhile(value => value === null),
       tap(({ roles }) => {
         this.signedin$.next(true)
-        this.roles$.next(roles)
-
-        if (roles) {
-          this.isCustomer$.next(roles.some(role => role === AuthRole.Customer))
-
-          this.isAdministrator$.next(roles.some(role => role === AuthRole.Administrator))
-        }
+        this.roles = roles
       }),
     )
   }
 
   checkAuth() {
     return this.http.get<AuthCheckResponse>(`${environment.apiUrl}/Auth/checkauth`).pipe(
+      skipWhile(value => value === null),
       tap(({ roles, authenticated }) => {
         this.signedin$.next(authenticated)
-        this.roles$.next(roles)
-
-        if (roles) {
-          this.isCustomer$.next(roles.some(role => role === AuthRole.Customer))
-
-          this.isAdministrator$.next(roles.some(role => role === AuthRole.Administrator))
-        }
+        this.roles = roles
       }),
     )
   }
