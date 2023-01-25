@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router'
 import { HomeComponent } from './home/home.component'
 import { CompteIndexComponent } from './compte-index/compte-index.component'
 import { CompteShowComponent } from './compte-show/compte-show.component'
-import { CompteListResolverService } from './compte-list-resolver.service'
-import { CompteResolverService } from './compte-resolver.service'
+import { CompteListResolver } from './compte-list.resolver'
+import { CompteResolver } from './compte.resolver'
 
 const routes: Routes = [
   {
@@ -15,14 +15,14 @@ const routes: Routes = [
         path: ':id',
         component: CompteShowComponent,
         resolve: {
-          compte: CompteResolverService,
+          compte: CompteResolver,
         },
       },
       {
         path: '',
         component: CompteIndexComponent,
         resolve: {
-          comptes: CompteListResolverService,
+          comptes: CompteListResolver,
         },
         runGuardsAndResolvers: 'paramsOrQueryParamsChange',
       },

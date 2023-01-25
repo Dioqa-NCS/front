@@ -71,26 +71,18 @@ export class CompteFormComponent implements OnInit {
     })
 
     if (this.compte && this.compteForm) {
-      const {
-        nom, tel,
-        mail, nomEntreprise,
-        prenom, mailFacturation,
-        adresseFacturation, reductionPrix, idTypeEntreprise,
-        villeFacturation, codePostalFacturation, telFacturation,
-      } = this.compte
-
-      this.compteForm.controls.nom.setValue(nom)
-      this.compteForm.controls.tel.setValue(tel)
-      this.compteForm.controls.mail.setValue(mail)
-      this.compteForm.controls.nomEntreprise.setValue(nomEntreprise)
-      this.compteForm.controls.prenom.setValue(prenom)
-      this.compteForm.controls.mailFacturation.setValue(mailFacturation)
-      this.compteForm.controls.adresseFacturation.setValue(adresseFacturation)
-      this.compteForm.controls.reductionPrix.setValue(reductionPrix)
-      this.compteForm.controls.idTypeEntreprise.setValue(idTypeEntreprise)
-      this.compteForm.controls.villeFacturation.setValue(villeFacturation)
-      this.compteForm.controls.codePostalFacturation.setValue(codePostalFacturation)
-      this.compteForm.controls.telFacturation.setValue(telFacturation)
+      this.compteForm.controls.nom.setValue(this.compte.nom)
+      this.compteForm.controls.tel.setValue(this.compte.tel)
+      this.compteForm.controls.mail.setValue(this.compte.mail)
+      this.compteForm.controls.nomEntreprise.setValue(this.compte.nomEntreprise)
+      this.compteForm.controls.prenom.setValue(this.compte.prenom)
+      this.compteForm.controls.mailFacturation.setValue(this.compte.mailFacturation)
+      this.compteForm.controls.adresseFacturation.setValue(this.compte.adresseFacturation)
+      this.compteForm.controls.reductionPrix.setValue(this.compte.reductionPrix)
+      this.compteForm.controls.idTypeEntreprise.setValue(this.compte.idTypeEntreprise)
+      this.compteForm.controls.villeFacturation.setValue(this.compte.villeFacturation)
+      this.compteForm.controls.codePostalFacturation.setValue(this.compte.codePostalFacturation)
+      this.compteForm.controls.telFacturation.setValue(this.compte.telFacturation)
     }
   }
 

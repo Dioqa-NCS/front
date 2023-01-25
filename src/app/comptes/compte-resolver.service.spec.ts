@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing'
 
-import { CompteResolverService } from './compte-resolver.service';
+import { CompteResolver } from './compte.resolver'
 
 describe('CompteResolverService', () => {
-  let service: CompteResolverService;
+  let service: CompteResolver
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(CompteResolverService);
-  });
+    TestBed.configureTestingModule({})
+    service = TestBed.inject(CompteResolver)
+  })
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+    expect(service).toBeTruthy()
+  })
+})

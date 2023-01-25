@@ -6,7 +6,7 @@
     </div>
 
 
-    <mat-expansion-panel (opened)="onOpenedDetail()" (closed)="onClosedDetail()"  [expanded]="expandDetail">
+    <mat-expansion-panel (closed)="onClosedDetail()" (opened)="onOpenedDetail(0)"  [expanded]="stepDetail === 0">
       <mat-expansion-panel-header>
         <mat-panel-title class="text-lg font-semibold">
           Détails
@@ -33,7 +33,8 @@
       Le même que pour comptes, sauf que je rajouterais des actions en plus
       - démarrer
       - terminer
-      - Facturer
+      - Facturer,
+      Création d'un validator spécifique l'API Google Maps
     </p>
   </div>
 

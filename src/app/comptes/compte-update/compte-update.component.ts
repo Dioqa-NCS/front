@@ -20,8 +20,12 @@ export class CompteUpdateComponent {
   onSubmit(compte: ComptePatched) {
     this.compteService.updateComptes([{ ...compte, id: this.compte.id }]).subscribe({
       next: () => {
-        this.toastrService.success('Les modifications ont été prises en compte.')
-        this.dialog.close()
+        this.compteService.getCompte(this.compte.id, {
+          $expand: 'typeentreprise($select=nom)',
+        }).subscribe(compteFind => {
+          this.toastrService.success('Les modifications ont été prises en compte.')
+          this.dialog.close(compteFind)
+        })
       },
     })
   }

@@ -5,7 +5,7 @@ import { Compte, CompteService } from './compte.service'
 @Injectable({
   providedIn: 'root',
 })
-export class CompteResolverService implements Resolve<Compte> {
+export class CompteResolver implements Resolve<Compte> {
   constructor(private compteService: CompteService) {
   }
 

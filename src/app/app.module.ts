@@ -16,6 +16,7 @@ import { AuthHttpInterceptor } from './auth/auth-http-interceptor'
 import { ErrorHttpInterop } from './error-http-interop'
 import { HomeComponent } from './home/home.component'
 import { DashboardComponent } from './dashboard/dashboard.component'
+import { SettingsModule } from './settings/settings.module'
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DashboardComponent } from './dashboard/dashboard.component'
     AppRoutingModule,
     BrowserAnimationsModule,
     AuthModule,
+    SettingsModule,
     MatSidenavModule,
     MatMenuModule,
     MatToolbarModule,

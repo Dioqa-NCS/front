@@ -91,6 +91,6 @@ export class CompteService {
   }
 
   updateComptes(comptes: ComptePatched[]) {
-    return this.http.patch<ComptePatched[]>(`${environment.apiUrl}/api/Comptes`, comptes)
+    return this.http.patch<Compte[]>(`${environment.apiUrl}/api/Comptes`, comptes)
   }
 }

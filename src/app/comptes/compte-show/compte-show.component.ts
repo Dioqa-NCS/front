@@ -20,62 +20,73 @@ export class CompteShowComponent implements OnInit {
 
   details?: detail[] = []
 
-  expandDetail = true
+  stepDetail = 0
 
   hideModifyButton = false
 
-  constructor(private route: ActivatedRoute, private dialog: MatDialog) {
+  constructor(
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+  ) {
   }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
       this.compte = data['compte']
-      if (this.compte) {
-        this.initDetails(this.compte)
-      }
+      this.initDetails()
     })
   }
 
-  initDetails(compte: Compte) {
-    this.details?.push({
-      title: 'Informations sur le compte',
-      content: `${compte.prenom} ${compte.nom}`,
-      break: compte.mail,
-    }, {
-      title: 'Téléphone',
-      content: compte.tel,
-    }, {
-      title: 'Email de facturation',
-      content: compte.mailFacturation ?? compte.mail,
-    }, {
-      title: 'Ville de facturation',
-      content: compte.villeFacturation,
-    }, {
-      title: 'Adresse de facturation',
-      content: compte.adresseFacturation,
-    }, {
-      title: 'Code postal de facturation',
-      content: compte.codePostalFacturation,
-    }, {
-      title: 'Téléphone de facturation',
-      content: compte.telFacturation ?? compte.tel,
-    }, {
-      title: 'Reduction',
-      content: `${compte.reductionPrix} %`,
-    })
-
-    if (compte.typeentreprise) {
-      this.details?.splice(-1, 0, {
-        title: 'Type d\'entreprise',
-        content: compte.typeentreprise.nom,
+  initDetails() {
+    if (this.compte) {
+      this.details = []
+      this.details?.push({
+        title: 'Informations sur le compte',
+        content: `${this.compte.prenom} ${this.compte.nom}`,
+        break: this.compte.mail,
+      }, {
+        title: 'Téléphone',
+        content: this.compte.tel,
+      }, {
+        title: 'Email de facturation',
+        content: this.compte.mailFacturation ?? this.compte.mail,
+      }, {
+        title: 'Ville de facturation',
+        content: this.compte.villeFacturation,
+      }, {
+        title: 'Adresse de facturation',
+        content: this.compte.adresseFacturation,
+      }, {
+        title: 'Code postal de facturation',
+        content: this.compte.codePostalFacturation,
+      }, {
+        title: 'Téléphone de facturation',
+        content: this.compte.telFacturation ?? this.compte.tel,
+      }, {
+        title: 'Reduction',
+        content: `${this.compte.reductionPrix} %`,
       })
+
+      if (this.compte.typeentreprise) {
+        this.details?.splice(-1, 0, {
+          title: 'Type d\'entreprise',
+          content: this.compte.typeentreprise.nom,
+        })
+      }
     }
   }
 
   onModify() {
-    this.expandDetail = false
+    this.onOpenedDetail(-1)
     this.dialog.open(CompteUpdateComponent, {
       data: this.compte,
+    }).afterClosed().subscribe({
+      next: async (compte: Compte) => {
+        if (compte && this.compte) {
+          this.compte = { ...this.compte, ...compte }
+          this.initDetails()
+        }
+      },
     })
   }
 
@@ -83,7 +94,8 @@ export class CompteShowComponent implements OnInit {
     this.hideModifyButton = true
   }
 
-  onOpenedDetail() {
+  onOpenedDetail(index: number) {
+    this.stepDetail = index
     this.hideModifyButton = false
   }
 }

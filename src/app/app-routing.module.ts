@@ -16,6 +16,11 @@ export type AppRoute = Route & {
 
 const routes: Routes = [
   {
+    path: 'settings',
+    loadChildren: () => import('./settings/settings.module').then(mod => mod.SettingsModule),
+    canLoad: [AuthGuard],
+  },
+  {
     path: 'comptes',
     loadChildren: () => import('./comptes/compte.module').then(mod => mod.CompteModule),
     canLoad: [AuthGuard, AuthRoleGuard],

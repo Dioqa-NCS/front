@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing'
 
-import { CompteListResolverService } from './compte-list-resolver.service'
+import { CompteListResolver } from './compte-list.resolver'
 
 describe('CompteResolverService', () => {
-  let service: CompteListResolverService
+  let service: CompteListResolver
 
   beforeEach(() => {
     TestBed.configureTestingModule({})
-    service = TestBed.inject(CompteListResolverService)
+    service = TestBed.inject(CompteListResolver)
   })
 
   it('should be created', () => {

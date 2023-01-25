@@ -11,10 +11,16 @@
             <span class="align-middle mr-2">Connection</span>
             <mat-icon class="align-middle">person_outline</mat-icon>
           </button>
-          <button *ngIf="authService.signedin$ | async" mat-icon-button routerLink="/signout">
-            <span class="align-middle mr-2">Déconnexion</span>
-            <mat-icon class="align-middle">exit_to_app</mat-icon>
-          </button>
+
+          <ng-container *ngIf="authService.signedin$ | async">
+            <button mat-button [matMenuTriggerFor]="menu">
+              <mat-icon class="align-middle">person</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item routerLink="/settings/compte">Profile</button>
+              <button mat-menu-item routerLink="/signout">Déconnexion</button>
+            </mat-menu>
+          </ng-container>
         </li>
       </ul>
     </div>
