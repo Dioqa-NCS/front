@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { Component } from '@angular/core'
+import { ActivatedRoute, Params, Router } from '@angular/router'
 import { MatDialog } from '@angular/material/dialog'
-import { Compte } from '../compte.service'
+import { Observable } from 'rxjs'
+import { Compte, fetchCompte } from '../compte.service'
 import { CompteUpdateComponent } from '../compte-update/compte-update.component'
 
 interface detail {
@@ -15,7 +16,9 @@ interface detail {
   templateUrl: './compte-show.component.html',
   styleUrls: ['./compte-show.component.css'],
 })
-export class CompteShowComponent implements OnInit {
+export class CompteShowComponent {
+  compte$ = fetchCompte()
+
   compte: Compte | null = null
 
   details?: detail[] = []
@@ -25,14 +28,14 @@ export class CompteShowComponent implements OnInit {
   hideModifyButton = false
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
   ) {
-  }
-
-  ngOnInit() {
-    this.route.data.subscribe(data => {
-      this.compte = data['compte']
+    this.compte$({
+      $expand: 'typeentreprise($select=nom)',
+    }).subscribe(compte => {
+      this.compte = compte
       this.initDetails()
     })
   }
@@ -81,10 +84,14 @@ export class CompteShowComponent implements OnInit {
     this.dialog.open(CompteUpdateComponent, {
       data: this.compte,
     }).afterClosed().subscribe({
-      next: async (compte: Compte) => {
-        if (compte && this.compte) {
-          this.compte = { ...this.compte, ...compte }
-          this.initDetails()
+      next: () => {
+        if (this.compte) {
+          this.compte$({
+            $expand: 'typeentreprise($select=nom)',
+          }).subscribe(compte => {
+            this.compte = { ...this.compte, ...compte }
+            this.initDetails()
+          })
         }
       },
     })

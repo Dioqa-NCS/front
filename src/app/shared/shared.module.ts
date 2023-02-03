@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatTableModule } from '@angular/material/table'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatIconModule } from '@angular/material/icon'
 import { InputComponent } from './input/input.component'
 import { InputSelectComponent } from './input-select/input-select.component'
 import { TabComponent } from './tab/tab.component'
@@ -36,6 +37,7 @@ const maskConfigFunction: () => Partial<IConfig> = () => ({
     MatPaginatorModule,
     MatCheckboxModule,
     FormsModule,
+    MatIconModule,
   ],
   exports: [
     InputComponent,

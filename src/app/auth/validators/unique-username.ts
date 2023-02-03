@@ -1,16 +1,10 @@
-import { Injectable } from '@angular/core'
 import { AbstractControl } from '@angular/forms'
 import { map } from 'rxjs'
-import { AuthService } from '../auth.service'
+import { usernameAvailable } from '../auth.service'
 
-@Injectable({
-  providedIn: 'root',
-})
-export class UniqueUsername {
-  constructor(private authService: AuthService) {
-  }
-
-  validate = (control: AbstractControl) => this.authService.usernameAvailable(control.value).pipe(
+export const uniqueNameValidator = () => {
+  const usernameAvailable$ = usernameAvailable()
+  return (control: AbstractControl) => usernameAvailable$(control.value).pipe(
     map((value) => (value.available ? { nonUniqueUsername: true } : null)),
   )
 }

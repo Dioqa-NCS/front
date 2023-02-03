@@ -11,6 +11,8 @@ import { FormControl } from '@angular/forms'
 export class InputComponent {
   @Input() classes = ['']
 
+  @Input() appearance : 'fill' | 'outline' = 'fill'
+
   @Input() label?: string
 
   @Input() control?: FormControl

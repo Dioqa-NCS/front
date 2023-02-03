@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { Params } from '@angular/router'
 import { environment } from '../../environments/environment'
-import { Compte, Params } from '../comptes/compte.service'
+import { Compte } from '../comptes/compte.service'
 
 export interface SettingCompte {
   id: number,
@@ -26,10 +27,10 @@ export interface SettingCompte {
   providedIn: 'root',
 })
 export class SettingService {
-  constructor(private http: HttpClient) { }
+  private _http = inject(HttpClient)
 
   getSettingCompte(params: Params | null = null) {
-    return this.http.get<SettingCompte>(`${environment.apiUrl}/api/Settings/Compte`, {
+    return this._http.get<SettingCompte>(`${environment.apiUrl}/api/Settings/Compte`, {
       params: { ...params },
     })
   }

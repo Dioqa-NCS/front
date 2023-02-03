@@ -10,6 +10,8 @@ interface SelectItem {
   styleUrls: ['./input-select.component.css'],
 })
 export class InputSelectComponent {
+  @Input() appearance : 'fill' | 'outline' = 'fill'
+
   @Input() classes : string[] = ['']
 
   @Input() label?: string

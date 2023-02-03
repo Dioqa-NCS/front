@@ -2,9 +2,9 @@ import { Component } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { ToastrService } from 'ngx-toastr'
 import { Router } from '@angular/router'
-import { MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 import { AuthService } from '../auth.service'
-import { PasswordFormatValidator } from '../validators/password-format-validator'
+import { passwordFormatValidator } from '../validators/password-format-validator'
 
 @Component({
   selector: 'app-signin',
@@ -20,7 +20,7 @@ export class SigninComponent {
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
-      PasswordFormatValidator.validate,
+      passwordFormatValidator,
     ]),
   })
 

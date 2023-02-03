@@ -5,6 +5,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { Compte } from '../compte.service'
 import { TypeEntrepriseResponse, TypeEntrepriseService } from '../../shared/services/type-entreprise.service'
 import { NumberFormatValidator } from '../../shared/validators/number-format-validator'
+import { uniqueNameValidator } from '../../auth/validators/unique-username'
 
 @Component({
   selector: 'app-compte-form',
@@ -32,7 +33,7 @@ export class CompteFormComponent implements OnInit {
     mail: new FormControl<string | null>(null, [
       Validators.required,
       Validators.email,
-    ]),
+    ], [uniqueNameValidator()]),
     tel: new FormControl<string | null>(null, [
       Validators.required,
       Validators.minLength(10),
@@ -48,6 +49,8 @@ export class CompteFormComponent implements OnInit {
     codePostalFacturation: new FormControl<string | null>(null, [
       Validators.required,
       NumberFormatValidator.validate,
+      Validators.minLength(5),
+      Validators.maxLength(5),
     ]),
     telFacturation: new FormControl<string | null>(null, [
       Validators.minLength(10),
@@ -62,7 +65,9 @@ export class CompteFormComponent implements OnInit {
 
   @Input() compte: Compte | null = null
 
-  constructor(public typeEntrepriseService: TypeEntrepriseService) {
+  constructor(
+    private typeEntrepriseService: TypeEntrepriseService,
+  ) {
   }
 
   ngOnInit() {

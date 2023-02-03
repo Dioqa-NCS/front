@@ -1,14 +1,14 @@
 <app-tab
   *ngIf="!clickable"
-  [items]="_comptes"
   [fields]="_fields"
   [clickable]="true"
+  [items]="comptes$"
 >
 </app-tab>
 
 <app-tab
   *ngIf="clickable"
-  [items]="_comptes"
+  [items]="comptes$"
   [fields]="_fields"
   [hasSelect]="true"
   (rowsChecked)="_onComptesChecked($event)"

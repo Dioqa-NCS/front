@@ -1,7 +1,8 @@
 import {
-  Component, EventEmitter, Input, OnInit, Output, ViewChild,
+  ChangeDetectorRef,
+  Component, EventEmitter, Input, Output, ViewChild,
 } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { Observable } from 'rxjs'
 import { CompteSummary } from '../compte.service'
 import { TabComponent } from '../../shared/tab/tab.component'
 
@@ -10,8 +11,14 @@ import { TabComponent } from '../../shared/tab/tab.component'
   templateUrl: './compte-tab.component.html',
   styleUrls: ['./compte-tab.component.css'],
 })
-export class CompteTabComponent implements OnInit {
-  _comptes: CompteSummary[] = []
+export class CompteTabComponent {
+  comptes$ = new Observable<CompteSummary[]>()
+
+  @Input()
+  set comptes(value: Observable<CompteSummary[]>) {
+    this.comptes$ = value
+    this.changeDetectorRef.detectChanges()
+  }
 
   @Output() compteClicked = new EventEmitter<CompteSummary>()
 
@@ -40,21 +47,7 @@ export class CompteTabComponent implements OnInit {
     },
   ]
 
-  constructor(private route: ActivatedRoute) {
-  }
-
-  ngOnInit() {
-    this.route.data.subscribe(data => {
-      if (!data['comptes']) {
-        throw new Error('Implémentez le resolver')
-      }
-
-      if (this.tab) {
-        this.tab.data = data['comptes']
-      } else {
-        this._comptes = data['comptes']
-      }
-    })
+  constructor(private changeDetectorRef: ChangeDetectorRef) {
   }
 
   deleteComptes(comptes: CompteSummary[]) {
@@ -63,8 +56,8 @@ export class CompteTabComponent implements OnInit {
     }
   }
 
-  async _onCompteClicked(compte: CompteSummary) {
-    this.compteClicked.emit(compte)
+  async _onCompteClicked(comptesClick: CompteSummary) {
+    this.compteClicked.emit(comptesClick)
   }
 
   _onComptesChecked(comptesCheck: CompteSummary[]) {

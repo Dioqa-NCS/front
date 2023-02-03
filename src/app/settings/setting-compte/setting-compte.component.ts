@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { SettingCompte } from '../setting.service'
 
 @Component({
   selector: 'app-setting-compte',
@@ -7,6 +8,8 @@ import { ActivatedRoute } from '@angular/router'
   styleUrls: ['./setting-compte.component.css'],
 })
 export class SettingCompteComponent implements OnInit {
+  settingCompte: SettingCompte | null = null
+
   constructor(
     private route: ActivatedRoute,
   ) {
@@ -14,7 +17,7 @@ export class SettingCompteComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(data => {
-      console.log(data['settingCompte'])
+      this.settingCompte = data['settingCompte']
     })
   }
 }

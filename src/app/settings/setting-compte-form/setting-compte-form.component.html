@@ -1,1 +1,78 @@
-<p>setting-compte-form works!</p>
+<form (ngSubmit)="onSubmit()" *ngIf="settingCompteForm" [formGroup]="settingCompteForm">
+  <app-input-select
+    [classes]="['w-full']"
+    [control]="settingCompteForm.controls.idTypeEntreprise"
+    label="Type d'entreprise"
+    [options]="typeEntreprises"
+    propPrinting="nom"
+    propBinding="id">
+  </app-input-select>
+  <app-input
+    appearance="fill"
+    label="Nom de l'entreprise"
+    inputType="text"
+    [classes]="['w-full']"
+    [control]="settingCompteForm.controls.nomEntreprise"
+  >
+  </app-input>
+
+  <h2>Informations personnelles</h2>
+  <div class="flex justify-around">
+    <app-input
+      [classes]="['w-full']"
+      class="mr-4 w-full"
+      label="Nom"
+      inputType="text"
+      [control]="settingCompteForm.controls.nom">
+    </app-input>
+    <app-input label="Prénom"
+               inputType="text"
+               class="w-full"
+               [classes]="['w-full']"
+               [control]="settingCompteForm.controls.prenom">
+    </app-input>
+  </div>
+
+  <div class="flex justify-around">
+    <app-input
+      class="mr-4 w-full"
+      label="Mail"
+      inputType="email"
+      [classes]="['w-full']"
+      [control]="settingCompteForm.controls.mail">
+    </app-input>
+
+    <app-input
+      label="Téléphone"
+      inputType="text"
+      mask="00-00-00-00-00"
+      class="w-full"
+      [control]="settingCompteForm.controls.tel"
+      [classes]="['w-full']">
+    </app-input>
+  </div>
+
+  <h2 class="text-center">Addresse de facturation</h2>
+
+  <app-input label="Adresse complète"
+             inputType="text"
+             [classes]="['w-full']"
+             [control]="settingCompteForm.controls.adresseFacturation">
+  </app-input>
+
+  <div class="flex justify-around">
+    <app-input class="mr-4 w-full" label="Ville"
+               inputType="text"
+               [classes]="['w-full']"
+               [control]="settingCompteForm.controls.villeFacturation">
+    </app-input>
+
+    <app-input class="w-full" label="Code postal"
+               inputType="text"
+               mask="00000"
+               [classes]="['w-full']"
+               [control]="settingCompteForm.controls.codePostalFacturation">
+    </app-input>
+  </div>
+
+</form>

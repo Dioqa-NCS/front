@@ -1,9 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { Store } from '@ngrx/store'
+import * as fromComptes from '../state/compte.reducer'
+
 import {
-  CompteService, CompteSummary, FilterCompte, Params,
+  CompteSummary, deleteComptes, FilterCompte, updateComptes,
 } from '../compte.service'
 import { CompteTabComponent } from '../compte-tab/compte-tab.component'
+import * as CompteIndexActions from '../state/compte-index.actions'
+import { selectComptes, selectComptesDisable, selectComptesEnable } from '../state/compte.selectors'
 
 @Component({
   selector: 'app-user-index',
@@ -11,49 +16,69 @@ import { CompteTabComponent } from '../compte-tab/compte-tab.component'
   styleUrls: ['./compte-index.component.css'],
 })
 export class CompteIndexComponent implements OnInit {
+  public comptes$ = this.store.select(selectComptes)
+
+  public comptesDelete$ = deleteComptes()
+
+  private comptesUpdate$ = updateComptes()
+
   comptesCheck: CompteSummary[] = []
 
-  activeFilter?: Params['$filter']
+  activeFilter?: FilterCompte = undefined
 
   @ViewChild(CompteTabComponent) comptesTab?: CompteTabComponent
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private compteService: CompteService,
+    private store: Store<fromComptes.State>,
   ) {
   }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+  async ngOnInit() {
+    this.store.dispatch(CompteIndexActions.loadComptes({ params: undefined }))
+    this.route.queryParams.subscribe(async params => {
       this.activeFilter = params['$filter']
-      this.comptesCheck = []
+
+      if (this.filterIsDisable()) {
+        await this.onToComptesDisabled()
+      }
+      if (this.filterIsEnable()) {
+        await this.onToComptesEnabled()
+      }
     })
   }
 
   async onToCompte(compte: CompteSummary) {
-    await this.router.navigate([compte.id], { relativeTo: this.route })
+    await this.router.navigate([compte.id], {
+      relativeTo: this.route,
+    })
   }
 
   async onToComptes() {
-    await this.router.navigate([])
+    this.comptes$ = this.store.select(selectComptes)
+    await this.router.navigate([], {
+      relativeTo: this.route,
+    })
   }
 
   async onToComptesDisabled() {
+    this.comptes$ = this.store.select(selectComptesDisable)
+    this.activeFilter = FilterCompte.disable
     await this.router.navigate([], {
       relativeTo: this.route,
-      queryParamsHandling: 'merge',
       queryParams: {
-        $filter: `${FilterCompte.disable}`,
+        $filter: FilterCompte.disable,
       },
     })
   }
 
   async onToComptesEnabled() {
+    this.comptes$ = this.store.select(selectComptesEnable)
     await this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        $filter: `${FilterCompte.enable}`,
+        $filter: FilterCompte.enable,
       },
     })
   }
@@ -75,7 +100,7 @@ export class CompteIndexComponent implements OnInit {
   }
 
   async onComptesDelete() {
-    this.compteService.deleteComptes(this.comptesCheck.map(compte => compte.id)).subscribe(() => {
+    this.comptesDelete$(this.comptesCheck.map(compte => compte.id)).subscribe(() => {
       if (this.comptesTab?.tab) {
         this.comptesTab.deleteComptes(this.comptesCheck)
       }
@@ -83,7 +108,7 @@ export class CompteIndexComponent implements OnInit {
   }
 
   onComptesEnable() {
-    this.compteService.updateComptes(this.comptesCheck.map(({ id }) => ({
+    this.comptesUpdate$(this.comptesCheck.map(({ id }) => ({
       id, estValider: '1',
     }))).subscribe(() => {
       if (this.comptesTab?.tab) {

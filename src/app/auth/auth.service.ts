@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { inject, Injectable } from '@angular/core'
 import {
   BehaviorSubject, map, skipWhile, take, tap,
 } from 'rxjs'
@@ -51,12 +51,18 @@ interface AuthSignupResponse {
   userName: string
 }
 
+export const usernameAvailable = () => {
+  const http = inject(HttpClient)
+  return (username: string) => http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
+    username,
+  })
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {
-  }
+  private _http = inject(HttpClient)
 
   signedin$ = new BehaviorSubject<boolean | null>(null)
 
@@ -87,17 +93,17 @@ export class AuthService {
   }
 
   usernameAvailable(username: string) {
-    return this.http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
+    return this._http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
       username,
     })
   }
 
   signup(userSignupRequest: Partial<AuthSignupRequest>) {
-    return this.http.post<AuthSignupResponse>(`${environment.apiUrl}/Auth/signup`, userSignupRequest)
+    return this._http.post<AuthSignupResponse>(`${environment.apiUrl}/Auth/signup`, userSignupRequest)
   }
 
   signout() {
-    return this.http.post(`${environment.apiUrl}/Auth/signout`, {})
+    return this._http.post(`${environment.apiUrl}/Auth/signout`, {})
       .pipe(tap({
         next: () => {
           this.signedin$.next(false)
@@ -106,7 +112,7 @@ export class AuthService {
   }
 
   signin(userSigninRequest: Partial<AuthSigninRequest>) {
-    return this.http.post<AuthSigninResponse>(`${environment.apiUrl}/Auth/signin`, userSigninRequest).pipe(
+    return this._http.post<AuthSigninResponse>(`${environment.apiUrl}/Auth/signin`, userSigninRequest).pipe(
       skipWhile(value => value === null),
       tap(({ roles }) => {
         this.signedin$.next(true)
@@ -116,7 +122,7 @@ export class AuthService {
   }
 
   checkAuth() {
-    return this.http.get<AuthCheckResponse>(`${environment.apiUrl}/Auth/checkauth`).pipe(
+    return this._http.get<AuthCheckResponse>(`${environment.apiUrl}/Auth/checkauth`).pipe(
       tap(({ roles, authenticated }) => {
         this.signedin$.next(authenticated)
         this.roles$.next(roles)

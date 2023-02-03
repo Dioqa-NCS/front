@@ -38,6 +38,7 @@
 
 
 <app-compte-tab
+  [comptes]="comptes$"
   [clickable]="true"
   (compteClicked)="onToCompte($event)"
   (comptesChecked)="onComptesChecked($event)"

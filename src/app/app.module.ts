@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { ToastrModule } from 'ngx-toastr'
+import { StoreModule } from '@ngrx/store'
 import { AppComponent } from './app.component'
 import { AppRoutingModule } from './app-routing.module'
 import { AuthModule } from './auth/auth.module'
@@ -16,7 +17,8 @@ import { AuthHttpInterceptor } from './auth/auth-http-interceptor'
 import { ErrorHttpInterop } from './error-http-interop'
 import { HomeComponent } from './home/home.component'
 import { DashboardComponent } from './dashboard/dashboard.component'
-import { SettingsModule } from './settings/settings.module'
+import { SettingsModule } from './settings/settings.module';
+import { EffectsModule } from '@ngrx/effects'
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { SettingsModule } from './settings/settings.module'
     MatIconModule,
     HttpClientModule,
     ToastrModule.forRoot(),
+    StoreModule.forRoot({}, {}),
+    EffectsModule.forRoot([]),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },

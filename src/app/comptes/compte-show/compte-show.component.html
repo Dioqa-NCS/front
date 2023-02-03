@@ -1,5 +1,5 @@
 <ng-container>
-  <div class="mr-5 w-1/4">
+  <div *ngIf="compte" class="mr-5 w-1/4">
     <div class="mb-10">
       <p class="text-2xl mb-1 font-bold"> {{ compte.prenom }} {{ compte.nom }}</p>
       <p>{{ compte.mail }}</p>

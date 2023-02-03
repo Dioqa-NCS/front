@@ -1,10 +1,11 @@
 import {
-  AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild,
+  AfterViewInit,
+  Component, EventEmitter, Input, OnInit, Output, ViewChild,
 } from '@angular/core'
 import * as _ from 'lodash'
 import { MatTableDataSource } from '@angular/material/table'
 import { MatPaginator } from '@angular/material/paginator'
-import { ActivatedRoute } from '@angular/router'
+import { Observable } from 'rxjs'
 
 export interface Field {
   key: string;
@@ -21,11 +22,19 @@ interface Item {
   styleUrls: ['./tab.component.css'],
 })
 export class TabComponent implements OnInit, AfterViewInit {
+  $items = new Observable<Item[]>()
+
+  @Input() set items(items: Observable<Item[]>) {
+    this.$items = items
+    this.$items.subscribe(data => {
+      this._dataSource.data = data
+      this._rowsCheck = []
+    })
+  }
+
   @Output() rowClicked = new EventEmitter<any>()
 
   @Output() rowsChecked = new EventEmitter<any>()
-
-  @Input() items: (Item | null) [] = []
 
   @Input() fields: Field[] | null = null
 
@@ -47,9 +56,6 @@ export class TabComponent implements OnInit, AfterViewInit {
 
   _ = _
 
-  constructor(private route: ActivatedRoute) {
-  }
-
   ngOnInit() {
     this._columns = _.map(this.fields, field => field.key)
 
@@ -60,21 +66,12 @@ export class TabComponent implements OnInit, AfterViewInit {
     if (!this.isPaginate && this.pagesSizeOptions) {
       throw new Error('IsPaginate doit être à true pour utiliser pagesSizeOptions ')
     }
-    this._dataSource.data = this.items
-
-    this.route.queryParams.subscribe(() => {
-      this._rowsCheck = []
-    })
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     if (this.isPaginate) {
       this._dataSource.paginator = this.paginator
     }
-  }
-
-  set data(items: Item[]) {
-    this._dataSource.data = items
   }
 
   deleteDatas(items: Item[]) {

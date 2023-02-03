@@ -1,7 +1,10 @@
 import { Component, Inject } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { ToastrService } from 'ngx-toastr'
-import { Compte, ComptePatched, CompteService } from '../compte.service'
+import { Observable } from 'rxjs'
+import {
+  Compte, ComptePatched, updateComptes,
+} from '../compte.service'
 
 @Component({
   selector: 'app-compte-update',
@@ -9,24 +12,24 @@ import { Compte, ComptePatched, CompteService } from '../compte.service'
   styleUrls: ['./compte-update.component.css'],
 })
 export class CompteUpdateComponent {
+  updateComptes$: ((comptes: ComptePatched[]) => Observable<Compte[]>) | null = null
+
   constructor(
-    private readonly compteService: CompteService,
     private readonly dialog: MatDialogRef<CompteUpdateComponent>,
     @Inject(MAT_DIALOG_DATA) public compte: Compte,
     private readonly toastrService: ToastrService,
   ) {
+    this.updateComptes$ = updateComptes()
   }
 
   onSubmit(compte: ComptePatched) {
-    this.compteService.updateComptes([{ ...compte, id: this.compte.id }]).subscribe({
-      next: () => {
-        this.compteService.getCompte(this.compte.id, {
-          $expand: 'typeentreprise($select=nom)',
-        }).subscribe(compteFind => {
+    if (this.updateComptes$) {
+      this.updateComptes$([{ ...compte, id: this.compte.id }]).subscribe({
+        next: () => {
           this.toastrService.success('Les modifications ont été prises en compte.')
-          this.dialog.close(compteFind)
-        })
-      },
-    })
+          this.dialog.close()
+        },
+      })
+    }
   }
 }

@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { ToastrService } from 'ngx-toastr'
 import { Router } from '@angular/router'
-import { MatchPassword } from '../validators/match-password'
-import { UniqueUsername } from '../validators/unique-username'
+import { matchPasswordValidator } from '../validators/match-password'
+import { uniqueNameValidator } from '../validators/unique-username'
 import { AuthService } from '../auth.service'
 import { TypeEntrepriseResponse, TypeEntrepriseService } from '../../shared/services/type-entreprise.service'
-import { PasswordFormatValidator } from '../validators/password-format-validator'
 import { NumberFormatValidator } from '../../shared/validators/number-format-validator'
+import { passwordFormatValidator } from '../validators/password-format-validator'
 
 @Component({
   selector: 'app-request-account',
@@ -33,7 +33,7 @@ export class RequestAccountComponent implements OnInit {
     mail: new FormControl('', [
       Validators.required,
       Validators.email,
-    ], [this.uniqueUsername.validate]),
+    ], [uniqueNameValidator()]),
     tel: new FormControl('', [
       Validators.required,
       Validators.minLength(10),
@@ -43,11 +43,12 @@ export class RequestAccountComponent implements OnInit {
     mdp: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
-      PasswordFormatValidator.validate,
+      passwordFormatValidator,
     ]),
     mdpConfirmation: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
+      passwordFormatValidator,
     ]),
     adresseFacturation: new FormControl('', [
       Validators.required,
@@ -58,6 +59,8 @@ export class RequestAccountComponent implements OnInit {
     codePostalFacturation: new FormControl('', [
       Validators.required,
       NumberFormatValidator.validate,
+      Validators.minLength(5),
+      Validators.maxLength(5),
     ]),
     telFacturation: new FormControl('', [
       Validators.minLength(10),
@@ -70,10 +73,9 @@ export class RequestAccountComponent implements OnInit {
         Validators.email,
       ],
     ),
-  }, { validators: [MatchPassword.validate] })
+  }, { validators: [matchPasswordValidator] })
 
   constructor(
-    private uniqueUsername: UniqueUsername,
     private authService: AuthService,
     private typeentrepriseService: TypeEntrepriseService,
     private toastrService: ToastrService,

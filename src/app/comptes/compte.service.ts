@@ -1,13 +1,11 @@
-import { Injectable } from '@angular/core'
+import { inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { ActivatedRoute, Params } from '@angular/router'
+import {
+  mergeMap,
+} from 'rxjs'
+import * as _ from 'lodash'
 import { environment } from '../../environments/environment'
-
-export interface Params {
-  $expand?: string,
-  $select?: string,
-  $filter?: string,
-  $orderby?: string
-}
 
 export interface CompteSummary {
   id: number,
@@ -16,7 +14,7 @@ export interface CompteSummary {
   nomEntreprise: string,
   mail: string,
   tel: string,
-  estValider: string,
+  estValider: '1' | 'O',
   typeentreprise: {
     nom: string
   }
@@ -49,12 +47,12 @@ export interface ComptePatched {
   prenom?: string,
   nom?: string,
   mail?: string,
-  tel? : string,
+  tel?: string,
   adresseFacturation?: string,
   villeFacturation?: string,
   codePostalFacturation?: string,
   telFacturation?: string,
-  mailFacturation? : string,
+  mailFacturation?: string,
   reductionPrix?: string
 }
 
@@ -63,34 +61,33 @@ export enum FilterCompte {
   disable = "estValider eq 'O'"
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CompteService {
-  constructor(private http: HttpClient) {
-  }
+export const fetchComptes = () => {
+  const http = inject(HttpClient)
+  return (params: Params | undefined = undefined) => http.get<CompteSummary[]>(`${environment.apiUrl}/api/Comptes`, {
+    params,
+  })
+}
 
-  getComptes(params: Params | null = null) {
-    return this.http.get<CompteSummary[]>(`${environment.apiUrl}/api/Comptes`, {
-      params: { ...params },
-    })
-  }
+export const fetchCompte = () => {
+  const http = inject(HttpClient)
+  const route = inject(ActivatedRoute)
+  return (paramsEntries: Params | undefined = undefined) => route.params.pipe(
+    mergeMap(params => http.get<Compte>(`${environment.apiUrl}/api/Comptes/${params['id']}`, {
+      params: _.merge(paramsEntries, params),
+    })),
+  )
+}
 
-  getCompte(id: number, params: Params | null = null) {
-    return this.http.get<Compte>(`${environment.apiUrl}/api/Comptes/${id}`, {
-      params: { ...params },
-    })
-  }
+export const deleteComptes = () => {
+  const http = inject(HttpClient)
+  return (ids: number[]) => http.delete(`${environment.apiUrl}/api/Comptes`, {
+    params: {
+      Ids: ids.join(','),
+    },
+  })
+}
 
-  deleteComptes(ids: number[]) {
-    return this.http.delete(`${environment.apiUrl}/api/Comptes`, {
-      params: {
-        Ids: ids.join(','),
-      },
-    })
-  }
-
-  updateComptes(comptes: ComptePatched[]) {
-    return this.http.patch<Compte[]>(`${environment.apiUrl}/api/Comptes`, comptes)
-  }
+export const updateComptes = () => {
+  const http = inject(HttpClient)
+  return (comptes: ComptePatched[]) => http.patch<Compte[]>(`${environment.apiUrl}/api/Comptes`, comptes)
 }
