@@ -11,10 +11,10 @@
   [items]="comptes$"
   [fields]="_fields"
   [hasSelect]="true"
-  (rowsChecked)="_onComptesChecked($event)"
   (rowClicked)="_onCompteClicked($event)"
   [clickable]="true"
   [isPaginate]="true"
   [pagesSizeOptions]="[5, 10, 20]"
+  [itemsCheck]="comptesCheck$"
 >
 </app-tab>

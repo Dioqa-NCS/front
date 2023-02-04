@@ -1,19 +1,20 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
-import * as fromBooks from './compte.reducer'
+import * as _ from 'lodash'
+import * as fromComptes from './compte.reducer'
 
-export const selectCompteFeature = createFeatureSelector<fromBooks.State>('comptes')
+export const selectCompteFeature = createFeatureSelector<fromComptes.StateComptes>('comptes')
 
 export const selectComptes = createSelector(
   selectCompteFeature,
-  (state) => state.comptes,
+  (state) => _.map(state.comptes),
 )
 
 export const selectComptesEnable = createSelector(
   selectComptes,
-  (comptes) => comptes.filter(compte => compte.estValider === '1'),
+  (comptes) => _.filter(comptes, { estValider: '1' }),
 )
 
 export const selectComptesDisable = createSelector(
   selectComptes,
-  (comptes) => comptes.filter(compte => compte.estValider === 'O'),
+  (comptes) => _.filter(comptes, { estValider: 'O' }),
 )

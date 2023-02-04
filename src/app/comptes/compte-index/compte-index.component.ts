@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Store } from '@ngrx/store'
+import { BehaviorSubject, Observable } from 'rxjs'
 import * as fromComptes from '../state/compte.reducer'
-
 import {
-  CompteSummary, deleteComptes, FilterCompte, updateComptes,
+  CompteSummary, FilterCompte,
 } from '../compte.service'
 import { CompteTabComponent } from '../compte-tab/compte-tab.component'
 import * as CompteIndexActions from '../state/compte-index.actions'
-import { selectComptes, selectComptesDisable, selectComptesEnable } from '../state/compte.selectors'
+import * as compteSelectors from '../state/compte.selectors'
 
 @Component({
   selector: 'app-user-index',
@@ -16,35 +16,47 @@ import { selectComptes, selectComptesDisable, selectComptesEnable } from '../sta
   styleUrls: ['./compte-index.component.css'],
 })
 export class CompteIndexComponent implements OnInit {
-  public comptes$ = this.store.select(selectComptes)
+  public comptes$ = new Observable<CompteSummary[]>()
 
-  public comptesDelete$ = deleteComptes()
+  public comptesAll$ = this.store.select(compteSelectors.selectComptes)
 
-  private comptesUpdate$ = updateComptes()
+  public comptesDisable$ = this.store.select(compteSelectors.selectComptesDisable)
+
+  public comptesEnable$ = this.store.select(compteSelectors.selectComptesEnable)
+
+  public comptesCheck$ = new BehaviorSubject<CompteSummary[] | null>(null)
 
   comptesCheck: CompteSummary[] = []
 
-  activeFilter?: FilterCompte = undefined
+  activeFilterCompte? : FilterCompte = undefined
 
   @ViewChild(CompteTabComponent) comptesTab?: CompteTabComponent
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private store: Store<fromComptes.State>,
+    private store: Store<fromComptes.StateComptes>,
   ) {
   }
 
   async ngOnInit() {
     this.store.dispatch(CompteIndexActions.loadComptes({ params: undefined }))
-    this.route.queryParams.subscribe(async params => {
-      this.activeFilter = params['$filter']
+    this.comptesCheck$.subscribe(comptesCheck => {
+      if (comptesCheck) {
+        this.comptesCheck = comptesCheck
+      }
+    })
 
+    this.route.queryParams.subscribe(queryparam => {
+      this.activeFilterCompte = queryparam['$filter']
+      if (!this.activeFilterCompte) {
+        this.comptes$ = this.comptesAll$
+      }
       if (this.filterIsDisable()) {
-        await this.onToComptesDisabled()
+        this.comptes$ = this.comptesDisable$
       }
       if (this.filterIsEnable()) {
-        await this.onToComptesEnabled()
+        this.comptes$ = this.comptesEnable$
       }
     })
   }
@@ -56,35 +68,26 @@ export class CompteIndexComponent implements OnInit {
   }
 
   async onToComptes() {
-    this.comptes$ = this.store.select(selectComptes)
+    this.comptes$ = this.comptesAll$
     await this.router.navigate([], {
       relativeTo: this.route,
     })
   }
 
   async onToComptesDisabled() {
-    this.comptes$ = this.store.select(selectComptesDisable)
-    this.activeFilter = FilterCompte.disable
+    this.comptes$ = this.comptesDisable$
     await this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        $filter: FilterCompte.disable,
-      },
+      queryParams: { $filter: FilterCompte.disable },
     })
   }
 
   async onToComptesEnabled() {
-    this.comptes$ = this.store.select(selectComptesEnable)
+    this.comptes$ = this.comptesEnable$
     await this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        $filter: FilterCompte.enable,
-      },
+      queryParams: { $filter: FilterCompte.enable },
     })
-  }
-
-  onComptesChecked(comptes: CompteSummary[]) {
-    this.comptesCheck = comptes
   }
 
   hasComptesChecked() {
@@ -92,28 +95,26 @@ export class CompteIndexComponent implements OnInit {
   }
 
   filterIsDisable() {
-    return this.activeFilter === FilterCompte.disable
+    return this.activeFilterCompte === FilterCompte.disable
   }
 
   filterIsEnable() {
-    return this.activeFilter === FilterCompte.enable
+    return this.activeFilterCompte === FilterCompte.enable
   }
 
-  async onComptesDelete() {
-    this.comptesDelete$(this.comptesCheck.map(compte => compte.id)).subscribe(() => {
-      if (this.comptesTab?.tab) {
-        this.comptesTab.deleteComptes(this.comptesCheck)
-      }
-    })
+  onComptesDelete() {
+    this.store.dispatch(CompteIndexActions.deleteComptes({
+      ids: this.comptesCheck.map(compte => compte.id),
+    }))
+    this.comptesCheck = []
   }
 
   onComptesEnable() {
-    this.comptesUpdate$(this.comptesCheck.map(({ id }) => ({
-      id, estValider: '1',
-    }))).subscribe(() => {
-      if (this.comptesTab?.tab) {
-        this.comptesTab.deleteComptes(this.comptesCheck)
-      }
-    })
+    this.store.dispatch(CompteIndexActions.updateComptes({
+      comptes: this.comptesCheck.map(({ id }) => ({
+        id, estValider: '1',
+      })),
+    }))
+    this.comptesCheck = []
   }
 }

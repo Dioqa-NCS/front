@@ -47,7 +47,7 @@ interface AuthSigninResponse {
   roles: AuthRole[]
 }
 
-interface AuthSignupResponse {
+export interface AuthSignupResponse {
   userName: string
 }
 
@@ -56,6 +56,11 @@ export const usernameAvailable = () => {
   return (username: string) => http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
     username,
   })
+}
+
+export const signup = () => {
+  const http = inject(HttpClient)
+  return (userSignupRequest: Partial<AuthSignupRequest>) => http.post<AuthSignupResponse>(`${environment.apiUrl}/Auth/signup`, userSignupRequest)
 }
 
 @Injectable({
@@ -90,12 +95,6 @@ export class AuthService {
       take(1),
       map(roles => roles?.includes(AuthRole.Administrator)),
     )
-  }
-
-  usernameAvailable(username: string) {
-    return this._http.post<AuthAvailableUsernameRequest>(`${environment.apiUrl}/Auth/username`, {
-      username,
-    })
   }
 
   signup(userSignupRequest: Partial<AuthSignupRequest>) {

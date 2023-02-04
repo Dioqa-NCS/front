@@ -20,7 +20,7 @@
 <mat-button-toggle-group class="mb-3 block">
   <mat-button-toggle
     (click)="onToComptes()"
-    [checked]="!activeFilter"
+    [checked]="!filterIsEnable() && !filterIsDisable()"
   >
     Tous
   </mat-button-toggle>
@@ -40,7 +40,7 @@
 <app-compte-tab
   [comptes]="comptes$"
   [clickable]="true"
+  [comptesCheck]="comptesCheck$"
   (compteClicked)="onToCompte($event)"
-  (comptesChecked)="onComptesChecked($event)"
 >
 </app-compte-tab>

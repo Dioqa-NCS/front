@@ -5,7 +5,8 @@ import {
 import * as _ from 'lodash'
 import { MatTableDataSource } from '@angular/material/table'
 import { MatPaginator } from '@angular/material/paginator'
-import { Observable } from 'rxjs'
+import { BehaviorSubject, Observable } from 'rxjs'
+import { MatCheckboxChange } from '@angular/material/checkbox'
 
 export interface Field {
   key: string;
@@ -16,25 +17,34 @@ interface Item {
   [key: string]: any
 }
 
+interface CheckoutRow {
+  checked: boolean,
+  item: Item
+}
+
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.css'],
 })
 export class TabComponent implements OnInit, AfterViewInit {
-  $items = new Observable<Item[]>()
+  itemsCheck$ = new BehaviorSubject<Item[]>([])
+
+  checkoutRows: CheckoutRow[] = []
+
+  @Input() set itemsCheck(comptesCheck: BehaviorSubject<any[]>) {
+    this.itemsCheck$ = comptesCheck
+  }
 
   @Input() set items(items: Observable<Item[]>) {
-    this.$items = items
-    this.$items.subscribe(data => {
-      this._dataSource.data = data
-      this._rowsCheck = []
+    items.subscribe(data => {
+      this.checkoutRows = data.map(item => ({ item, checked: false }))
+      this._dataSource.data = this.checkoutRows
     })
+    this.itemsCheck$.next([])
   }
 
   @Output() rowClicked = new EventEmitter<any>()
-
-  @Output() rowsChecked = new EventEmitter<any>()
 
   @Input() fields: Field[] | null = null
 
@@ -45,8 +55,6 @@ export class TabComponent implements OnInit, AfterViewInit {
   @Input() pagesSizeOptions: number[] | null = null
 
   @Input() hasSelect = false
-
-  private _rowsCheck: Item[] = []
 
   _columns: string[] = []
 
@@ -74,23 +82,24 @@ export class TabComponent implements OnInit, AfterViewInit {
     }
   }
 
-  deleteDatas(items: Item[]) {
-    this._dataSource.data = _.pullAll(this._dataSource.data, items)
-  }
-
-  onClickRow($event: any, item: Item) {
+  onClickRow($event: any, checkoutRow: CheckoutRow) {
     if ($event.target.type === 'checkbox') {
       return
     }
-    this.rowClicked.emit(item)
+    this.rowClicked.emit(checkoutRow.item)
   }
 
-  onCheckRow(checked: boolean, item: Item) {
-    if (!checked) {
-      this._rowsCheck.splice(this._rowsCheck.indexOf(item), 1)
-      return
+  onCheckRow(event: MatCheckboxChange, checkoutRow: CheckoutRow, index: number) {
+    this.checkoutRows[index] = { checked: event.checked, item: checkoutRow.item }
+
+    if (!event.checked) {
+      this.checkoutRows[index].checked = event.checked
     }
-    this._rowsCheck.push(item)
-    this.rowsChecked.emit(this._rowsCheck)
+
+    const items = this.checkoutRows
+      .filter(({ checked }) => checked)
+      .map(({ item }) => item)
+
+    this.itemsCheck$.next(items)
   }
 }

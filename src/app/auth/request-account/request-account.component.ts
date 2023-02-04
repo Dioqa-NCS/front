@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { ToastrService } from 'ngx-toastr'
 import { Router } from '@angular/router'
+import { Store } from '@ngrx/store'
 import { matchPasswordValidator } from '../validators/match-password'
 import { uniqueNameValidator } from '../validators/unique-username'
 import { AuthService } from '../auth.service'
 import { TypeEntrepriseResponse, TypeEntrepriseService } from '../../shared/services/type-entreprise.service'
 import { NumberFormatValidator } from '../../shared/validators/number-format-validator'
 import { passwordFormatValidator } from '../validators/password-format-validator'
+import * as AuthRequestAccountActions from '../state/auth-request-account.actions'
 
 @Component({
   selector: 'app-request-account',
@@ -80,6 +82,7 @@ export class RequestAccountComponent implements OnInit {
     private typeentrepriseService: TypeEntrepriseService,
     private toastrService: ToastrService,
     private router: Router,
+    private store: Store,
   ) {
   }
 
@@ -90,15 +93,12 @@ export class RequestAccountComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authService.signup({
-      ...this.requestAccountForm.value,
-      userName: this.requestAccountForm.value.mail,
-      email: this.requestAccountForm.value.mail,
-    }).subscribe({
-      next: async () => {
-        this.toastrService.success('Demande de compte transmis avec succès. Veuillez attendre l\'activation de votre compte.')
-        await this.router.navigateByUrl('/')
+    this.store.dispatch(AuthRequestAccountActions.signup({
+      userSignupRequest: {
+        ...this.requestAccountForm.value,
+        userName: this.requestAccountForm.value.mail,
+        email: this.requestAccountForm.value.mail,
       },
-    })
+    }))
   }
 }
